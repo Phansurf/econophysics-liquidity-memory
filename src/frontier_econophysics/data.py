@@ -141,9 +141,16 @@ def prepare_quotes(source: FrameSource, frequency: str = "30min", max_gap: str =
         sampled = session.set_index("timestamp").resample(frequency, closed="right", label="right").last()
         groups.append(sampled.dropna(subset=["price"]).reset_index())
     sampled = pd.concat(groups, ignore_index=True)
-    sampled = sampled.sort_values("timestamp", kind="stable")
+    # A 23:59 quote and the next day's 00:00 quote both receive a 00:00
+    # right-edge label. Reject the entire overlap explicitly; taking either
+    # row silently would conceal loss of one source session's observation.
+    collisions = sampled.duplicated("timestamp", keep=False)
+    audit["resampling_collision_bins"] = int(sampled.loc[collisions, "timestamp"].nunique())
+    audit["resampling_collision_rows_removed"] = int(collisions.sum())
+    sampled = sampled.loc[~collisions].sort_values("timestamp", kind="stable")
     audit["valid_quote_rows_before_resampling"] = len(frame)
-    return _result(sampled, audit, "quotes", max_gap, frequency=frequency, spread_cutoff=5.0)
+    return _result(sampled, audit, "quotes", max_gap, frequency=frequency, spread_cutoff=5.0,
+                   resampling_collision_policy="drop all rows sharing a bin label across source sessions")
 
 
 def prepare_prices(source: FrameSource, max_gap: str = "90min") -> PreparedData:
