@@ -78,19 +78,25 @@ def volatility_covariance(t, m, lam, sigma=1.0, normalize_variance=False):
 
 
 def _logistic_log_flow(x, a, b, duration):
-    """Naive logistic flow in log space; overflows for large positive a*duration.
+    """Exact deterministic flow in log space, without clipping or price floors.
 
-    The saturating solution P = (a/b) P0 e^{a dt} / (P0 (e^{a dt} - 1) + a/b)
-    evaluates exp(a*duration) directly, which overflows to inf for extreme
-    positive growth, producing nan through inf/inf.
+    For a>0 divide the exact reciprocal-price denominator by exp(a*duration).
+    This avoids expm1(+large), overflow, and subtraction of two large log terms.
+    Negative-a trajectories can have arbitrarily negative finite log prices.
     """
     if b == 0:
         return x + a * duration
-    with np.errstate(over="ignore", invalid="ignore"):
-        e = np.exp(a * duration)
-        p0 = np.exp(x)
-        p1 = (a * p0 * e) / (b * p0 * (e - 1.0) + a)
-    return np.log(p1)
+    if a > 0:
+        with np.errstate(over="ignore"):
+            z = a * duration
+        log_k_minus_z = np.log(b) - np.log(a) + np.log(-np.expm1(-z))
+        return -np.logaddexp(-x - z, log_k_minus_z)
+    if a == 0:
+        return -np.logaddexp(-x, np.log(b) + np.log(duration))
+    # expm1(a*duration) is bounded in [-1,0) for negative a.
+    z = a * duration
+    log_k = np.log(b) - np.log(-a) + np.log(-np.expm1(z))
+    return x + z - np.logaddexp(0.0, x + log_k)
 
 
 def step_log_state(x, h, params, dt, z_w, z_h, *, omit_ito=False):
