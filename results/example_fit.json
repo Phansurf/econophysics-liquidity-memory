@@ -1,0 +1,94 @@
+{
+  "best": {
+    "order": 2,
+    "alpha": [
+      1.4276467717718755,
+      -1.421001843798172
+    ],
+    "sigma2": 0.02214109761833005,
+    "loglik": 130.76115027731498,
+    "aic": -255.52230055462996,
+    "condition": 22.82088209180649,
+    "raw_condition": 22.82201457932822,
+    "n": 79
+  },
+  "all_fits": [
+    {
+      "order": 1,
+      "alpha": [
+        0.0260970638651613
+      ],
+      "sigma2": 0.023655640492124274,
+      "loglik": 128.14759000659868,
+      "aic": -252.29518001319735,
+      "condition": 1.0,
+      "raw_condition": 1.0,
+      "n": 79
+    },
+    {
+      "order": 2,
+      "alpha": [
+        1.4276467717718755,
+        -1.421001843798172
+      ],
+      "sigma2": 0.02214109761833005,
+      "loglik": 130.76115027731498,
+      "aic": -255.52230055462996,
+      "condition": 22.82088209180649,
+      "raw_condition": 22.82201457932822,
+      "n": 79
+    },
+    {
+      "order": 3,
+      "alpha": [
+        -0.46459198225373394,
+        2.4621899591004777,
+        -1.9767177585986064
+      ],
+      "sigma2": 0.022119507475514045,
+      "loglik": 130.79968615847,
+      "aic": -253.59937231694,
+      "condition": 554.9452558083553,
+      "raw_condition": 556.3412424666913,
+      "n": 79
+    },
+    {
+      "order": 4,
+      "alpha": [
+        81.42244282233919,
+        -251.31768229348623,
+        258.80532744578625,
+        -88.86120710949531
+      ],
+      "sigma2": 0.021706815050602443,
+      "loglik": 131.54361499805847,
+      "aic": -253.08722999611695,
+      "condition": 11828.376903391785,
+      "raw_condition": 11894.928861945284,
+      "n": 79
+    }
+  ],
+  "diagnostics": {
+    "input_rows": 80,
+    "invalid_timestamp_rows": 0,
+    "nonfinite_numeric_rows": 0,
+    "out_of_order_adjacent_pairs": 0,
+    "nonpositive_price_rows": 0,
+    "duplicate_timestamp_rows_removed": 0,
+    "output_rows": 80,
+    "eligible_transitions": 79,
+    "excluded_transitions": 0
+  },
+  "metadata": {
+    "source_kind": "prices",
+    "timezone": "UTC",
+    "duplicate_policy": "last valid row in original file order",
+    "forward_fill": false,
+    "max_gap": "90min",
+    "session_policy": "UTC calendar date proxy; no cross-date transitions",
+    "corporate_actions": "not supplied; split/dividend adjustment NOT performed",
+    "evidence_status": "user-supplied input only; no claim of original-paper real-data replication"
+  },
+  "selected_segment_rows": 80,
+  "time_unit_seconds": 3000.0
+}

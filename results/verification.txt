@@ -1,0 +1,28 @@
+test_exact_weighted_normal_likelihood (test_baseline.BaselineTests.test_exact_weighted_normal_likelihood) ... ok
+test_failure_is_preserved (test_baseline.BaselineTests.test_failure_is_preserved) ... ok
+test_gibbs_flat_variance_prior_moment (test_baseline.BaselineTests.test_gibbs_flat_variance_prior_moment) ... ok
+test_irregular_dt_and_order (test_baseline.BaselineTests.test_irregular_dt_and_order) ... ok
+test_potential_gradient_and_roots (test_baseline.BaselineTests.test_potential_gradient_and_roots) ... ok
+test_config_normalization_and_explicit_false_override (test_cli.CLIIntegrationTests.test_config_normalization_and_explicit_false_override) ... ok
+test_demo_raw_and_normalized_variance (test_cli.CLIIntegrationTests.test_demo_raw_and_normalized_variance) ... ok
+test_fit_csv_does_not_bridge_overnight_or_intraday_gap (test_cli.CLIIntegrationTests.test_fit_csv_does_not_bridge_overnight_or_intraday_gap) ... ok
+test_invalid (test_data.TestData.test_invalid) ... ok
+test_last_valid (test_data.TestData.test_last_valid) ... ok
+test_midnight_collision (test_data.TestData.test_midnight_collision) ... ok
+test_prices (test_data.TestData.test_prices) ... ok
+test_quotes (test_data.TestData.test_quotes) ... ok
+test_source_session (test_data.TestData.test_source_session) ... ok
+test_common_noise_ou_coupling (test_liquidity.LiquidityTests.test_common_noise_ou_coupling) ... ok
+test_controlled_ito_error (test_liquidity.LiquidityTests.test_controlled_ito_error) ... ok
+test_covariance_and_binomial_uncertainty (test_liquidity.LiquidityTests.test_covariance_and_binomial_uncertainty) ... ok
+test_exact_deterministic_logistic (test_liquidity.LiquidityTests.test_exact_deterministic_logistic) ... ok
+test_extreme_deterministic_logistic_without_clipping (test_liquidity.LiquidityTests.test_extreme_deterministic_logistic_without_clipping) ... ok
+test_gamma_mean (test_liquidity.LiquidityTests.test_gamma_mean) ... ok
+test_ito_boundary_and_m_independence (test_liquidity.LiquidityTests.test_ito_boundary_and_m_independence) ... ok
+test_no_price_floor_and_validation (test_liquidity.LiquidityTests.test_no_price_floor_and_validation) ... ok
+test_stationary_ou_and_positive_prices (test_liquidity.LiquidityTests.test_stationary_ou_and_positive_prices) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 8.390s
+
+OK

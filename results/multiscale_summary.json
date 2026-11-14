@@ -1,0 +1,65 @@
+{
+  "model": "superposition of OU log-illiquidity components",
+  "units": "dimensionless price and time",
+  "stationary_h_initialization": true,
+  "interpretation": "synthetic mechanism experiments, not calibrated market forecasts",
+  "seed_map": {
+    "invariance": "30000 + spectrum index",
+    "first_passage": "31000 + 100*lambda_index + spectrum index",
+    "memory_acf": "32000"
+  },
+  "annealed_invariance": {
+    "a": 0.5,
+    "b": 0,
+    "sigma": 0.7,
+    "lambda": 1.0,
+    "T": 100.0,
+    "n_paths": 8192,
+    "theory_growth": 0.09606328867846864
+  },
+  "finite_time_risk": {
+    "a": 0.8,
+    "b": 1.0,
+    "sigma": 0.7,
+    "T": 80.0,
+    "threshold_ratio": 0.1,
+    "n_paths": 1536,
+    "lambda_values": [
+      0.6,
+      0.8
+    ]
+  },
+  "volatility_memory": [
+    {
+      "spectrum": "single (m=2)",
+      "lambda": 0.8,
+      "timescales": [
+        2.0
+      ],
+      "weights": [
+        1.0
+      ],
+      "acf_lag_0.1T": 0.9346369929571879,
+      "acf_lag_T": 0.5205375471575208,
+      "acf_lag_10T": 0.02006910418068984
+    },
+    {
+      "spectrum": "three-scale (0.5,5,50)",
+      "lambda": 0.8,
+      "timescales": [
+        0.5,
+        5.0,
+        50.0
+      ],
+      "weights": [
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333
+      ],
+      "acf_lag_0.1T": 0.8991858545616258,
+      "acf_lag_T": 0.5334418876613117,
+      "acf_lag_10T": 0.26836251657885424
+    }
+  ],
+  "runtime_seconds": 26.803780099988217
+}

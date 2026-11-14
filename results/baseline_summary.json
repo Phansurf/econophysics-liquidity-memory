@@ -1,0 +1,152 @@
+{
+  "paper": {
+    "doi": "10.1103/PhysRevE.109.024226",
+    "published": "2024-02-28",
+    "scope": "Synthetic core-algorithm replication, not TAQ/CRSP empirical replication",
+    "original_missing": [
+      "dt distribution",
+      "initial price",
+      "parameter randomization distribution",
+      "RNG seed",
+      "MCMC configuration"
+    ]
+  },
+  "seed": 20261114,
+  "parameter_recovery": {
+    "trials_requested": 100,
+    "increments_per_trial": 1000,
+    "successful_trials": 100,
+    "failed_trials": 0,
+    "truth": [
+      2.0,
+      -1.0,
+      0.01,
+      0.05
+    ],
+    "mean": [
+      2.028980843619996,
+      -0.9897988901475666,
+      -0.001875289774674241,
+      0.04980893005182753
+    ],
+    "std": [
+      1.6828885417981434,
+      1.6727048656464505,
+      0.4138014687639154,
+      0.00214933578517292
+    ],
+    "truth_within_mean_plus_minus_std": [
+      true,
+      true,
+      true,
+      true
+    ],
+    "dt": "Uniform(0.02,0.08)",
+    "p0": 2.0,
+    "median_scaled_condition": 237.7613271372667
+  },
+  "order_recovery": {
+    "trials_per_order": 100,
+    "coefficients": [
+      [
+        0.15
+      ],
+      [
+        2.0,
+        -1.0
+      ],
+      [
+        0.5,
+        1.0,
+        -0.5
+      ],
+      [
+        0.5,
+        1.0,
+        0.2,
+        -0.5
+      ]
+    ],
+    "sigma": 0.5,
+    "p0": "Uniform(0.6,2.6)",
+    "dt": "Uniform(0.01,0.05)",
+    "confusion_matrix_rows_true_columns_selected": [
+      [
+        32,
+        47,
+        6,
+        15
+      ],
+      [
+        0,
+        79,
+        8,
+        13
+      ],
+      [
+        0,
+        43,
+        44,
+        13
+      ],
+      [
+        0,
+        6,
+        67,
+        27
+      ]
+    ],
+    "failed_trials": {},
+    "completion": "Representative coefficients; paper random-parameter law unspecified"
+  },
+  "posterior": {
+    "fit": {
+      "order": 2,
+      "alpha": [
+        2.0930282711873303,
+        -1.0639326268056124
+      ],
+      "sigma2": 0.08987915416452638,
+      "loglik": 8962.788840671474,
+      "aic": -17919.577681342947,
+      "condition": 13.347460667929415,
+      "raw_condition": 16.444046864799766,
+      "n": 10000
+    },
+    "rhat": [
+      0.9999384619226221,
+      0.9999443704740035,
+      1.0002146370756626
+    ],
+    "ess": [
+      15311.960554722944,
+      15168.89493932821,
+      16000.0
+    ],
+    "chains": 4,
+    "draws_per_chain": 4000,
+    "burn_per_chain": 1000,
+    "method": "4-chain Gibbs MCMC; flat alpha and sigma2 prior",
+    "prior": "improper uniform(alpha,sigma2); proper posterior checked by full rank and n>q+2",
+    "seed": 20352114,
+    "stable_positive_fixed_point_probability": 1.0
+  },
+  "paper_fig2_fixed_points": [
+    {
+      "price": 0.0,
+      "drift_derivative": 2.0,
+      "stability": "unstable"
+    },
+    {
+      "price": 2.041684766872805,
+      "drift_derivative": -1.958315233127196,
+      "stability": "stable"
+    },
+    {
+      "price": 97.9583152331272,
+      "drift_derivative": 93.95831523312717,
+      "stability": "unstable"
+    }
+  ],
+  "wall_seconds": 4.480054551000649
+}
