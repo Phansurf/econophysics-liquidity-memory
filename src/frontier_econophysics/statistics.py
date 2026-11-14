@@ -27,7 +27,8 @@ def wilson_interval(successes, trials, z=1.959963984540054):
     denominator = 1 + z*z/trials
     center = (p+z*z/(2*trials))/denominator
     half = z*np.sqrt(p*(1-p)/trials + z*z/(4*trials*trials))/denominator
-    return (float(max(0, center-half)), float(min(1, center+half)))
+    return (0.0 if successes == 0 else float(max(0, center-half)),
+            1.0 if successes == trials else float(min(1, center+half)))
 
 
 def return_diagnostics(log_price, max_lag=100):
