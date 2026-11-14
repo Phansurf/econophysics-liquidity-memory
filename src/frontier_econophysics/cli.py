@@ -100,7 +100,7 @@ def main():
         opts=['--'+key.replace('_','-')]
         if key=='lam': opts.append('--lambda')
         d.add_argument(*opts,dest=key,type=kind,default=None)
-    d.add_argument('--normalize-variance',action='store_true',default=False)
+    d.add_argument('--normalize-variance',action=argparse.BooleanOptionalAction,default=None)
     d.add_argument('--out',default='results/live')
     d.set_defaults(func=demo)
     f=sub.add_parser('fit-csv',help='fit user-supplied timestamp,price data')
