@@ -1,8 +1,8 @@
 # 流动性记忆、随机价格稳定性与极端波动
 
-Project 5：经济物理学开放性前沿研究。该仓库可离线生成全部合成实验、相图与压力测试结果；技术研究报告（LaTeX 源码与 PDF）位于同级目录 `../article/`。
+Project 5：经济物理学开放性前沿研究。该仓库可离线生成全部合成实验、相图与压力测试结果。
 
-基于 Wand, Wiedemann, Harren & Kamps, **Physical Review E 109, 024226 (2024)**，DOI [10.1103/PhysRevE.109.024226](https://doi.org/10.1103/PhysRevE.109.024226)，复现其多项式 Langevin 推断核心与合成参数回收。原文正式发表于 2024-02-28，符合报告日期 2026-11-14 向前近三年的要求。
+基于 Wand, Wiedemann, Harren & Kamps, **Physical Review E 109, 024226 (2024)**，DOI [10.1103/PhysRevE.109.024226](https://doi.org/10.1103/PhysRevE.109.024226)，复现其多项式 Langevin 推断核心与合成参数回收。原文正式发表于 2024-02-28。
 
 **范围说明：**没有获取原论文 TAQ/CRSP 数据，也没有复现真实市场图 3–6；原图 1 未公开随机参数抽样范围，因此本项目改做明确代表系数的选阶实验，结果不冒充原图复现。全部 CSV 示例均为合成数据。指数 OU 随机波动率已有文献；本课题的扩展在于逆深度解释、与多项式恢复力结合，以及区分平均噪声预算与记忆效应的对照实验。
 
@@ -29,18 +29,14 @@ PYTHONPATH=src python -m unittest discover -s tests -v
 
 完整基线约 5 秒、扩展约 43 秒；总用时依硬件而变。结果是固定种子的统计复现，不保证不同 BLAS/Python 平台位级相同。`reproduce` 会覆盖同名实验结果；`scripts/run_extension.py --quick` 是较小样本的调试模式，会覆盖正式结果，调试后请重新跑正式模式。
 
-## 提交材料
+## 项目结构
 
 | 内容 | 位置 |
 |---|---|
-| 中文 A4 技术研究报告（LaTeX 源 + PDF） | `../article/main.tex`，`../article/technical_report_zh.pdf` |
 | 完整 Python 源码 | `src/frontier_econophysics/` |
 | 依赖与环境 | `pyproject.toml`, `requirements.txt`, `results/environment.json` |
 | 基线与扩展结果 | `results/*_summary.json`, `results/data/`, `results/figures/` |
 | 多尺度记忆探索（原创） | `src/frontier_econophysics/multiscale.py`, `scripts/run_multiscale.py`, `results/multiscale_summary.json` |
-| 半页诊断与详细推导 | 报告第 7 节，`../article/notes/theory_review.md` |
-| 答辩调参与逐行代码解读（独立 note，非报告正文） | `../article/notes/defense.md` |
-| 原文范围与补全设置 | `../article/notes/literature_scope.md` |
 | 物理与集成验证 | `tests/`，`results/verification.txt` |
 
 ## 模型与创新问题
@@ -132,10 +128,10 @@ python scripts/make_architecture.py
 
 单元测试检查物理极限，集成测试还检查 JSON 配置覆盖、CSV 分段与命令行真实运行。
 
-`../article/notes/defense.md` 为实际函数逐行解释（答辩备忘，独立于报告正文）；修改代码后行号可能漂移，应以函数名称定位。重要抽查函数：`fit_polynomial`, `sample_posterior`, `step_log_state`, `step_multiscale`, `coupled_convergence`, `prepare_quotes`。
+重要抽查函数：`fit_polynomial`, `sample_posterior`, `step_log_state`, `step_multiscale`, `coupled_convergence`, `prepare_quotes`。
 
 ## 研究局限
 
 这是机制探索，不是经过真实市场校准的预测模型。没有显式撮合/订单队列、内生撤单反馈、杠杆约束或经验杠杆效应；单一 OU 是单指数记忆，多尺度叠加把单指数延展为有限尺度的慢衰减，但仍是有限个指数的凸组合，不等于真正的幂律长期记忆。合成厚尾不意味着确认幂律或 SOC。大 λ 和 m≫T 下稀有事件与混合不足会让有限样本显著误导。
 
-源代码为独立实现，使用 MIT 许可；论文与资料的版权归其原作者。完整参考文献见报告及 `../article/notes/literature_scope.md`。
+源代码为独立实现，使用 MIT 许可；论文与资料的版权归其原作者。
