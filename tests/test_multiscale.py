@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 
 from frontier_econophysics.multiscale import (MultiScaleParams, simulate_multiscale,
+                                              step_multiscale,
                                               volatility_covariance_multiscale)
 from frontier_econophysics.liquidity import volatility_covariance, low_price_growth
 
@@ -55,6 +56,32 @@ class TestMultiScaleValidation(unittest.TestCase):
     def test_timescale_must_be_positive(self):
         with self.assertRaises(ValueError):
             MultiScaleParams(timescales=(0.0, 5.0), weights=(0.5, 0.5)).validate()
+
+
+class TestMultiScaleShapes(unittest.TestCase):
+    def test_step_multiscale_single_path_keeps_component_shape(self):
+        # Regression: h=(K,) must advance to (K,), not broadcast to (K, K).
+        params = MultiScaleParams(timescales=(0.5, 5.0, 50.0), weights=(1/3, 1/3, 1/3))
+        h = np.array([0.1, -0.2, 0.3])
+        x_new, h_new = step_multiscale(0.0, h, params, 0.02, 0.0, np.array([0.1, -0.1, 0.2]))
+        self.assertEqual(np.asarray(h_new).shape, (3,))
+        self.assertEqual(np.asarray(x_new).shape, ())
+
+    def test_simulate_multiscale_custom_h0_vector_applies_to_every_path(self):
+        # Regression: h0=(K,) means the same K components for every path, so
+        # every path's initial total h equals sum(h0), not a per-path shift.
+        params = MultiScaleParams(lam=1.0, timescales=(0.5, 5.0, 50.0), weights=(1/3, 1/3, 1/3))
+        h0 = np.array([0.1, 0.2, 0.3])
+        r = simulate_multiscale(params, n_steps=1, dt=0.02, n_paths=4, seed=5, h0=h0)
+        np.testing.assert_allclose(r.log_illiquidity[0], np.full(4, 0.6), rtol=1e-12)
+
+    def test_simulate_multiscale_custom_h0_works_for_n_paths_not_equal_k(self):
+        # Regression: h0=(K,) must not error when n_paths != K.
+        params = MultiScaleParams(timescales=(0.5, 5.0, 50.0), weights=(1/3, 1/3, 1/3))
+        h0 = np.array([0.1, 0.2, 0.3])
+        r = simulate_multiscale(params, n_steps=1, dt=0.02, n_paths=2, seed=5, h0=h0)
+        self.assertEqual(r.log_illiquidity.shape, (2, 2))
+        np.testing.assert_allclose(r.log_illiquidity[0], np.full(2, 0.6), rtol=1e-12)
 
 
 if __name__ == '__main__':

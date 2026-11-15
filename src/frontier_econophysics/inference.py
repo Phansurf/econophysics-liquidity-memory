@@ -142,5 +142,5 @@ def sample_posterior(price, time, order=2, draws=4000, burn=1000, chains=4, seed
                 out[chain, it - burn, :q] = alpha
                 out[chain, it - burn, q] = s2
     return {'samples': out, 'rhat': _split_rhat(out), 'ess': _ess(out),
-            'method': '4-chain Gibbs MCMC; flat alpha and sigma2 prior',
+            'method': f'{chains}-chain Gibbs MCMC; flat alpha and sigma2 prior',
             'parameter_names': [f'alpha{i+1}' for i in range(q)] + ['sigma2']}

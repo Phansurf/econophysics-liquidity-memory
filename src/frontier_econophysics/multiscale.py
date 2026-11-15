@@ -8,9 +8,10 @@ superposition of ``K`` independent OU processes,
     h(t) = sum_k h_k(t),   dh_k = -(h_k / m_k) dt + sqrt(2 lam^2 w_k / m_k) dB_k,
 
 with timescales ``m_k`` and nonnegative weights ``w_k`` summing to one. The
-stationary ``h`` is still Gaussian ``N(0, lam^2)``, therefore the annealed
-low-price invasion exponent ``g = a - sigma^2/2 exp(lam^2/2)`` is invariant to
-the spectrum ``{m_k}``; only finite-time risk and memory persistence move.
+stationary ``h`` is still Gaussian ``N(0, lam^2)``, therefore the tangent
+sample Lyapunov (stationary average log growth) exponent
+``g = a - sigma^2/2 exp(lam^2/2)`` is invariant to the spectrum ``{m_k}``;
+only finite-time risk and memory persistence move.
 
 This module deliberately reuses :func:`frontier_econophysics.liquidity._logistic_log_flow`
 so the positive log-price integrator is identical to the single-scale path.
@@ -110,23 +111,30 @@ def _price_step_log(x, h, a, b, sigma, lam, dt, z_w, normalize_variance=False):
 
 
 def step_multiscale(x, h, params, dt, z_w, z_h):
-    """One positive splitting step with K exact OU updates; z_h has shape (K,).
+    """One positive splitting step with K exact OU updates.
 
-    ``h`` is the (K,) or (K, n_paths) array of components; the price sees their
-    sum over the component axis (axis 0). Each component is advanced with its
-    own timescale via the exact OU endpoint transition, so the step remains
-    stable even when dt is not small against m_k.
+    ``h`` is the (K,) or (K, n_paths) array of components and ``z_h`` has the
+    same shape; the price sees their sum over the component axis (axis 0).
+    Each component is advanced with its own timescale via the exact OU
+    endpoint transition, so the step remains stable even when dt is not small
+    against m_k.
     """
     params.validate()
     if not np.isfinite(dt) or dt <= 0:
         raise ValueError("dt must be positive and finite")
     ts = np.asarray(params.timescales, float)
     ws = np.asarray(params.weights, float)
-    x_new = _price_step_log(x, np.asarray(h).sum(axis=0), params.a, params.b, params.sigma, params.lam,
+    h_arr = np.asarray(h)
+    x_new = _price_step_log(x, h_arr.sum(axis=0), params.a, params.b, params.sigma, params.lam,
                             dt, z_w, params.normalize_variance)
     rho = np.exp(-dt / ts)
     innovation_sd = params.lam * np.sqrt(ws) * np.sqrt(-np.expm1(-2 * dt / ts))
-    h_new = rho[:, None] * np.asarray(h) + innovation_sd[:, None] * z_h
+    if h_arr.ndim == 1:
+        # single path: (K,) components advance independently, no path axis
+        h_new = rho * h_arr + innovation_sd * np.asarray(z_h)
+    else:
+        # (K, n_paths): broadcast the per-component decay/noise over paths
+        h_new = rho[:, None] * h_arr + innovation_sd[:, None] * np.asarray(z_h)
     return x_new, h_new
 
 
@@ -137,9 +145,10 @@ def simulate_multiscale(params=MultiScaleParams(), *, n_steps=5000, dt=0.02,
 
     ``h`` is a (K, n_paths) array of independent OU components. Stationary
     per-component initialization is used when ``h0`` is None; otherwise ``h0``
-    must broadcast to (K,) or (K, n_paths). A first-passage event is checked at
-    integration-grid points and hence can miss crossings between samples.
-    Failures are never resampled or silently removed.
+    must be a (K,) vector (the same K components shared by every path) or a
+    (K, n_paths) array. A first-passage event is checked at integration-grid
+    points and hence can miss crossings between samples. Failures are never
+    resampled or silently removed.
     """
     params.validate()
     ts = np.asarray(params.timescales, float)
@@ -158,7 +167,12 @@ def simulate_multiscale(params=MultiScaleParams(), *, n_steps=5000, dt=0.02,
     if h0 is None:
         h = rng.normal(0.0, params.lam * np.sqrt(ws)[:, None], (K, n_paths))
     else:
-        h = np.broadcast_to(np.asarray(h0, float), (K, n_paths)).copy()
+        h0_arr = np.asarray(h0, float)
+        if h0_arr.shape == (K,):
+            # the same K components for every path (per-component axis -> path axis)
+            h = np.broadcast_to(h0_arr[:, None], (K, n_paths)).copy()
+        else:
+            h = np.broadcast_to(h0_arr, (K, n_paths)).copy()
     if not np.isfinite(h).all():
         raise ValueError("h0 must be finite")
     saved_steps = np.unique(np.r_[np.arange(0, n_steps + 1, store_stride), n_steps])

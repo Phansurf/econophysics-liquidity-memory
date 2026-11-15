@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Reproducible multi-timescale memory experiments: annealed invariance,
-finite-time risk vs spectrum, and near power-law volatility memory."""
+"""Reproducible multi-timescale memory experiments: stationary-average invariance,
+finite-time risk vs spectrum, and slowly-decaying variance-proxy memory."""
 from pathlib import Path
 import argparse, csv, json, time
 import numpy as np
@@ -55,7 +55,7 @@ def main():
                'seed_map': {'invariance': '30000 + spectrum index', 'first_passage': '31000 + 100*lambda_index + spectrum index',
                             'memory_acf': '32000'}}
 
-    # ---- Experiment 1: annealed invariance + finite-T self-averaging ----
+    # ---- Experiment 1: stationary-average invariance + finite-T self-averaging ----
     a, sigma, lam, T = 0.5, 0.7, 1.0, 100.0
     n_paths = 1024 if args.quick else 8192
     steps = 5000
@@ -73,7 +73,7 @@ def main():
                          'growth_se': float(g.std(ddof=1) / np.sqrt(len(g))),
                          'cross_path_std': float(g.std(ddof=1)),
                          'theory_growth': g_theory, 'failed_paths': r.n_failed})
-    summary['annealed_invariance'] = {'a': a, 'b': 0, 'sigma': sigma, 'lambda': lam, 'T': T,
+    summary['tangent_growth_invariance'] = {'a': a, 'b': 0, 'sigma': sigma, 'lambda': lam, 'T': T,
                                       'n_paths': n_paths, 'theory_growth': g_theory}
     write_csv(ROOT / 'results/data/multiscale_invariance.csv', inv_rows)
     fig, axes = plt.subplots(1, 2, figsize=(10.5, 3.6))
@@ -81,9 +81,9 @@ def main():
     means = [r['mean_growth'] for r in inv_rows]
     ses = [r['growth_se'] for r in inv_rows]
     axes[0].errorbar(xs, means, yerr=1.96 * np.array(ses), fmt='o', color='#456e9b', capsize=3)
-    axes[0].axhline(g_theory, color='#d46138', ls='--', lw=1.4, label=f'annealed theory g={g_theory:.4f}')
+    axes[0].axhline(g_theory, color='#d46138', ls='--', lw=1.4, label=f'stationary-average theory g={g_theory:.4f}')
     axes[0].set_xticks(xs, [r['spectrum'] for r in inv_rows], rotation=25, ha='right', fontsize=7.5)
-    axes[0].set(ylabel='mean log growth / time', title='Invariance of the annealed exponent')
+    axes[0].set(ylabel='mean log growth / time', title='Invariance of the stationary-average log growth')
     axes[0].legend(fontsize=8)
     taus = [r['mean_memory_time'] for r in inv_rows]
     cps = [r['cross_path_std'] for r in inv_rows]

@@ -59,6 +59,14 @@ class BaselineTests(unittest.TestCase):
         self.assertTrue(np.all(post['rhat'] < 1.03))
         self.assertTrue(np.all(post['ess'] > 1000))
 
+    def test_posterior_method_reports_actual_chain_count(self):
+        # Regression: metadata must reflect the requested chain count, not a
+        # hard-coded "4-chain" label.
+        sim = simulate_em([2., -1.], .3, np.full(2000, .02), seed=3)
+        post = sample_posterior(sim.price, sim.time, 2, draws=200, burn=50, chains=2, seed=44)
+        self.assertIn('2-chain', post['method'])
+        self.assertEqual(post['samples'].shape[0], 2)
+
 
 if __name__ == '__main__':
     unittest.main()
