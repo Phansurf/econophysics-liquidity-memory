@@ -90,7 +90,7 @@ def volatility_covariance_multiscale(t, timescales, weights, lam, sigma=1.0, nor
     return sigma ** 4 * prefactor * np.expm1(c)
 
 
-def _price_step_log(x, h, a, b, sigma, lam, dt, z_w, normalize_variance=False, omit_ito=False):
+def _price_step_log(x, h, a, b, sigma, lam, dt, z_w, normalize_variance=False):
     """Positive log-price splitting step for a given total log-illiquidity h.
 
     Mirrors :func:`liquidity.step_log_state` so single- and multi-scale paths
@@ -104,14 +104,12 @@ def _price_step_log(x, h, a, b, sigma, lam, dt, z_w, normalize_variance=False, o
         else:
             offset = lam ** 2 / 2 if normalize_variance else 0.0
             v = sigma * np.exp((np.asarray(h) - offset) / 2)
-        x_noise = x_half + v * np.sqrt(dt) * z_w
-        if not omit_ito:
-            x_noise = x_noise - 0.5 * v * v * dt
+        x_noise = x_half + v * np.sqrt(dt) * z_w - 0.5 * v * v * dt
         x_new = _logistic_log_flow(x_noise, a, b, dt / 2)
     return x_new
 
 
-def step_multiscale(x, h, params, dt, z_w, z_h, *, omit_ito=False):
+def step_multiscale(x, h, params, dt, z_w, z_h):
     """One positive splitting step with K exact OU updates; z_h has shape (K,).
 
     ``h`` is the (K,) or (K, n_paths) array of components; the price sees their
@@ -125,7 +123,7 @@ def step_multiscale(x, h, params, dt, z_w, z_h, *, omit_ito=False):
     ts = np.asarray(params.timescales, float)
     ws = np.asarray(params.weights, float)
     x_new = _price_step_log(x, np.asarray(h).sum(axis=0), params.a, params.b, params.sigma, params.lam,
-                            dt, z_w, params.normalize_variance, omit_ito)
+                            dt, z_w, params.normalize_variance)
     rho = np.exp(-dt / ts)
     innovation_sd = params.lam * np.sqrt(ws) * np.sqrt(-np.expm1(-2 * dt / ts))
     h_new = rho[:, None] * np.asarray(h) + innovation_sd[:, None] * z_h
@@ -134,7 +132,7 @@ def step_multiscale(x, h, params, dt, z_w, z_h, *, omit_ito=False):
 
 def simulate_multiscale(params=MultiScaleParams(), *, n_steps=5000, dt=0.02,
                         n_paths=256, seed=20261114, p0=1.0, h0=None,
-                        store_stride=1, threshold_ratio=0.1, omit_ito=False):
+                        store_stride=1, threshold_ratio=0.1):
     """Vectorized independent paths of the multi-timescale model.
 
     ``h`` is a (K, n_paths) array of independent OU components. Stationary
@@ -176,8 +174,7 @@ def simulate_multiscale(params=MultiScaleParams(), *, n_steps=5000, dt=0.02,
     for i in range(1, n_steps + 1):
         x_next, h_next = step_multiscale(x, h, params, dt,
                                          rng.standard_normal(n_paths),
-                                         rng.standard_normal((K, n_paths)),
-                                         omit_ito=omit_ito)
+                                         rng.standard_normal((K, n_paths)))
         newly_failed = (~failed) & (~np.isfinite(x_next) | ~np.isfinite(h_next.sum(axis=0)))
         failure_step[newly_failed] = i
         failed |= newly_failed

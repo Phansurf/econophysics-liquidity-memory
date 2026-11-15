@@ -121,17 +121,16 @@ print(prepared.frame)
 
 报价输入为 `timestamp,bid,ask`，剔除非法时间、非有限/非正价格、交叉报价、价差≥5；同刻保留原输入最后有效报价，30 分钟取最后有效中价，不 forward-fill。午夜采样箱碰撞会全部剔除并审计。`observed_at` 是实际报价时刻，`timestamp` 是采样箱边界；报价的 `eligible_dt_seconds` 来自实际观测间隔。使用者必须尊重 `transition_eligible`，且应提供交易所日历与公司行动信息。模块不自动“去噪”跳跃，也不会凭空修正拆股或股息。
 
-## 单独重跑、诊断与审查
+## 单独重跑与审查
 
 ```bash
 python scripts/run_baseline.py
 python scripts/run_extension.py
 python scripts/run_multiscale.py
-python scripts/run_diagnostics.py
 python scripts/make_architecture.py
 ```
 
-`run_diagnostics.py` 主动注入漏 Itô 修正、粗步 EM 和正规方程病态等失败。报告把这些**受控错误**与真实发生的 AIC 测试假设错误、Wilson 浮点端点错误分开记录；没有编造个人历史或原作者错误。单元测试检查物理极限，集成测试还检查 JSON 配置覆盖、CSV 分段与命令行真实运行。
+单元测试检查物理极限，集成测试还检查 JSON 配置覆盖、CSV 分段与命令行真实运行。
 
 `../article/notes/defense.md` 为实际函数逐行解释（答辩备忘，独立于报告正文）；修改代码后行号可能漂移，应以函数名称定位。重要抽查函数：`fit_polynomial`, `sample_posterior`, `step_log_state`, `step_multiscale`, `coupled_convergence`, `prepare_quotes`。
 

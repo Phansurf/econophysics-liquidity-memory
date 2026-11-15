@@ -112,7 +112,7 @@ def main():
         root=Path(__file__).resolve().parents[2]
         if not (root/'scripts').is_dir():
             raise SystemExit('Run reproduce from the provided source checkout.')
-        scripts=['run_baseline.py','run_extension.py','run_multiscale.py','run_diagnostics.py','make_architecture.py']
+        scripts=['run_baseline.py','run_extension.py','run_multiscale.py','make_architecture.py']
         for script in scripts:
             subprocess.run([sys.executable,str(root/'scripts'/script)],cwd=root,check=True)
         subprocess.run([sys.executable,'-m','unittest','discover','-s','tests','-v'],cwd=root,check=True)

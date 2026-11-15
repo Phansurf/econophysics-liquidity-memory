@@ -99,13 +99,11 @@ def _logistic_log_flow(x, a, b, duration):
     return x + z - np.logaddexp(0.0, x + log_k)
 
 
-def step_log_state(x, h, params, dt, z_w, z_h, *, omit_ito=False):
+def step_log_state(x, h, params, dt, z_w, z_h):
     """One positive splitting step; caller supplies independent N(0,1) draws.
 
-    This function is suitable for line-by-line defense: funding/saturation half
-    flow, multiplicative order-flow kick, second half flow, exact OU transition.
-    ``omit_ito`` exists solely for the explicitly labelled controlled-error test.
-    It MUST remain False in scientific production runs.
+    Funding/saturation half flow, multiplicative order-flow kick, second half
+    flow, exact OU transition. The Ito correction is always applied.
     """
     params.validate()
     if not np.isfinite(dt) or dt <= 0:
@@ -115,9 +113,7 @@ def step_log_state(x, h, params, dt, z_w, z_h, *, omit_ito=False):
     with np.errstate(over="ignore", invalid="ignore"):
         v = np.zeros_like(np.asarray(h), dtype=float) if params.sigma == 0 else params.sigma * np.exp((np.asarray(h) - (params.lam**2/2 if params.normalize_variance else 0)) / 2)
         # Ito correction is necessary when transforming dP/P into d(log P).
-        x_noise = x_half + v * np.sqrt(dt) * z_w
-        if not omit_ito:
-            x_noise = x_noise - 0.5 * v * v * dt
+        x_noise = x_half + v * np.sqrt(dt) * z_w - 0.5 * v * v * dt
         x_new = _logistic_log_flow(x_noise, params.a, params.b, dt / 2)
     # This OU transition is exact even when dt is not small compared with m.
     rho = np.exp(-dt / params.m)
@@ -128,7 +124,7 @@ def step_log_state(x, h, params, dt, z_w, z_h, *, omit_ito=False):
 
 def simulate_liquidity(params=LiquidityParams(), *, n_steps=5000, dt=0.02,
                        n_paths=256, seed=20261114, p0=1.0, h0=None,
-                       store_stride=1, threshold_ratio=0.1, omit_ito=False):
+                       store_stride=1, threshold_ratio=0.1):
     """Vectorized independent paths, explicit first passage and numerical failures.
 
     Stationary h0 is sampled by default. A first-passage event is checked at
@@ -157,7 +153,7 @@ def simulate_liquidity(params=LiquidityParams(), *, n_steps=5000, dt=0.02,
     threshold = np.log(p0) + np.log(threshold_ratio)
     write = 1
     for i in range(1, n_steps + 1):
-        x_next, h_next = step_log_state(x, h, params, dt, rng.standard_normal(n_paths), rng.standard_normal(n_paths), omit_ito=omit_ito)
+        x_next, h_next = step_log_state(x, h, params, dt, rng.standard_normal(n_paths), rng.standard_normal(n_paths))
         newly_failed = (~failed) & (~np.isfinite(x_next) | ~np.isfinite(h_next))
         failure_step[newly_failed] = i
         failed |= newly_failed

@@ -2322,20 +2322,6 @@
       "failed_paths": 0
     }
   ],
-  "controlled_error_ito": {
-    "label": "controlled fault injection: omit Ito correction",
-    "a": 0.3,
-    "sigma": 1,
-    "lambda": 0,
-    "T": 100,
-    "n_paths": 1024,
-    "correct_growth": -0.19623141492947596,
-    "wrong_growth": 0.3037685850705342,
-    "theory_correct": -0.2,
-    "theory_wrong": 0.3,
-    "predicted_bias": 0.5,
-    "observed_bias": 0.5000000000000102
-  },
   "stress": [
     {
       "lambda": 0,

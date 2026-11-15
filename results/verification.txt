@@ -13,7 +13,6 @@ test_prices (test_data.TestData.test_prices) ... ok
 test_quotes (test_data.TestData.test_quotes) ... ok
 test_source_session (test_data.TestData.test_source_session) ... ok
 test_common_noise_ou_coupling (test_liquidity.LiquidityTests.test_common_noise_ou_coupling) ... ok
-test_controlled_ito_error (test_liquidity.LiquidityTests.test_controlled_ito_error) ... ok
 test_covariance_and_binomial_uncertainty (test_liquidity.LiquidityTests.test_covariance_and_binomial_uncertainty) ... ok
 test_exact_deterministic_logistic (test_liquidity.LiquidityTests.test_exact_deterministic_logistic) ... ok
 test_extreme_deterministic_logistic_without_clipping (test_liquidity.LiquidityTests.test_extreme_deterministic_logistic_without_clipping) ... ok
@@ -21,8 +20,15 @@ test_gamma_mean (test_liquidity.LiquidityTests.test_gamma_mean) ... ok
 test_ito_boundary_and_m_independence (test_liquidity.LiquidityTests.test_ito_boundary_and_m_independence) ... ok
 test_no_price_floor_and_validation (test_liquidity.LiquidityTests.test_no_price_floor_and_validation) ... ok
 test_stationary_ou_and_positive_prices (test_liquidity.LiquidityTests.test_stationary_ou_and_positive_prices) ... ok
+test_normalized_covariance_drops_exponential_prefactor (test_multiscale.TestMultiScaleCovariance.test_normalized_covariance_drops_exponential_prefactor) ... ok
+test_single_component_matches_single_scale_formula (test_multiscale.TestMultiScaleCovariance.test_single_component_matches_single_scale_formula) ... ok
+test_zero_lag_equals_lognormal_variance (test_multiscale.TestMultiScaleCovariance.test_zero_lag_equals_lognormal_variance) ... ok
+test_stationary_h_variance_is_lam_squared_for_any_spectrum (test_multiscale.TestMultiScaleStationarity.test_stationary_h_variance_is_lam_squared_for_any_spectrum) ... ok
+test_tangent_growth_mean_matches_annealed_theory (test_multiscale.TestMultiScaleStationarity.test_tangent_growth_mean_matches_annealed_theory) ... ok
+test_timescale_must_be_positive (test_multiscale.TestMultiScaleValidation.test_timescale_must_be_positive) ... ok
+test_weights_must_sum_to_one (test_multiscale.TestMultiScaleValidation.test_weights_must_sum_to_one) ... ok
 
 ----------------------------------------------------------------------
-Ran 23 tests in 8.390s
+Ran 29 tests in 6.803s
 
 OK

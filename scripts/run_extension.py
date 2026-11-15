@@ -33,7 +33,7 @@ def main():
     summary={'model':'original liquidity-OU stochastic-logistic extension','seed_map':{'traces':7100,'gamma':8119,'growth_phase':'9200+lambda_index',
         'normalization_control':'10100+int(10*lambda)','first_passage':'11200+100*lambda_index+m_index',
         'memory':'15100+int(10*m)','convergence':17111,'risk_refinement':'18110+int(10*m)+round(1000*dt)',
-        'stress':'19111+10*int(m)+lambda','ito_error':20111},
+        'stress':'19111+10*int(m)+lambda'},
         'interpretation':'synthetic mechanism experiments, not calibrated market forecasts',
         'scheme':'positive log-price splitting, exact OU endpoints, frozen left-end volatility; no claimed order',
         'stationary_h_initialization':True,'units':'dimensionless price and time'}
@@ -199,20 +199,11 @@ def main():
             stress.append({'lambda':lam,'m':m,'dt':d,'dt_over_m':d/m,'T':20,'n_paths':128,
                 'failed_paths':sr.n_failed,'fraction_hit_0.1':float(np.isfinite(sr.first_passage_time).mean()),
                 'terminal_log_price_min':float(np.min(sr.log_price[-1])),'terminal_log_price_median':float(np.median(sr.log_price[-1]))})
-    # Controlled error injection, not fabricated autobiographical debugging.
-    ep=LiquidityParams(a=.3,b=0,sigma=1,m=2,lam=0)
-    right=simulate_liquidity(ep,n_steps=5000,dt=.02,n_paths=1024,seed=20111,store_stride=5000)
-    wrong=simulate_liquidity(ep,n_steps=5000,dt=.02,n_paths=1024,seed=20111,store_stride=5000,omit_ito=True)
-    summary['controlled_error_ito']={'label':'controlled fault injection: omit Ito correction',
-       'a':.3,'sigma':1,'lambda':0,'T':100,'n_paths':1024,
-       'correct_growth':float(right.log_price[-1].mean()/100),'wrong_growth':float(wrong.log_price[-1].mean()/100),
-       'theory_correct':-.2,'theory_wrong':.3,'predicted_bias':.5,
-       'observed_bias':float((wrong.log_price[-1]-right.log_price[-1]).mean()/100)}
     summary['stress']=stress;write_csv(ROOT/'results/data/extension_stress.csv',stress)
     summary['runtime_seconds']=time.perf_counter()-started
     (ROOT/'results/extension_summary.json').write_text(json.dumps(summary,indent=2,ensure_ascii=False)+'\n')
     print(json.dumps({'runtime_seconds':summary['runtime_seconds'],'summary_file':'results/extension_summary.json',
         'kurtosis':{k:v['excess_kurtosis'] for k,v in diagnostics.items()},'gamma':summary['gamma_benchmark'],
-        'max_failed_paths':summary['first_passage']['max_failed_paths'],'ito_error':summary['controlled_error_ito']},indent=2))
+        'max_failed_paths':summary['first_passage']['max_failed_paths']},indent=2))
 
 if __name__=='__main__': main()

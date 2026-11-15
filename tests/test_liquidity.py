@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from frontier_econophysics.liquidity import (LiquidityParams, simulate_liquidity,
-    critical_a, low_price_growth, stationary_gamma, step_log_state,
+    critical_a, low_price_growth, stationary_gamma,
     volatility_covariance, coupled_convergence)
 from frontier_econophysics.statistics import wilson_interval
 
@@ -63,12 +63,6 @@ class LiquidityTests(unittest.TestCase):
         self.assertTrue(np.isfinite(r.first_passage_time[0]))
         with self.assertRaises(ValueError): LiquidityParams(m=0).validate()
         with self.assertRaises(ValueError): simulate_liquidity(p,dt=-1)
-
-    def test_controlled_ito_error(self):
-        p=LiquidityParams(a=.1,b=0,sigma=1,lam=0)
-        right,_=step_log_state(np.array([0.]),np.array([0.]),p,.2,0,0)
-        wrong,_=step_log_state(np.array([0.]),np.array([0.]),p,.2,0,0,omit_ito=True)
-        self.assertAlmostEqual(float(wrong[0]-right[0]),.1)
 
     def test_covariance_and_binomial_uncertainty(self):
         self.assertAlmostEqual(float(volatility_covariance(0,2,1)),np.exp(1)*np.expm1(1))
