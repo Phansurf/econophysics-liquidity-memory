@@ -90,7 +90,7 @@ def main():
     axes[1].plot(taus, cps, 'o-', color='#d46138')
     axes[1].set(xlabel='mean memory time  tau = sum w_k m_k',
                 ylabel='cross-path std of finite-T growth', title='Self-averaging degrades with slow memory')
-    savefig(fig, 'multiscale_invariance.png')
+    savefig(fig, 'multiscale_invariance.pdf')
 
     # ---- Experiment 2: finite-time first-passage risk vs spectrum ----
     a_fp, b_fp, T_fp = 0.8, 1.0, 80.0
@@ -121,7 +121,7 @@ def main():
     ax.set_xticks(np.arange(len(names)), names, rotation=25, ha='right', fontsize=7.5)
     ax.set(ylabel='P(P <= 0.1 P0) over T=80', title='Finite-time risk falls with slow-memory fraction at fixed lambda')
     ax.legend(fontsize=8)
-    savefig(fig, 'multiscale_risk_spectrum.png')
+    savefig(fig, 'multiscale_risk_spectrum.pdf')
 
     # ---- Experiment 3: volatility memory, exponential vs near power-law ----
     n_long = 100000
@@ -146,7 +146,7 @@ def main():
     ax.set(xlabel='lag (time)', ylabel='ACF of exp(h) = normalized variance proxy',
            title='Single exponential vs slow multi-scale memory (log-log)')
     ax.legend(fontsize=8)
-    savefig(fig, 'multiscale_memory.png')
+    savefig(fig, 'multiscale_memory.pdf')
     summary['volatility_memory'] = acf_rows
     summary['runtime_seconds'] = time.perf_counter() - started
     (ROOT / 'results/multiscale_summary.json').write_text(json.dumps(summary, indent=2, ensure_ascii=False) + '\n')

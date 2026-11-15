@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the code-architecture diagram (results/figures/architecture.png)."""
+"""Generate the code-architecture diagram (results/figures/architecture.pdf)."""
 from pathlib import Path
 import matplotlib
 matplotlib.use('Agg')
@@ -36,9 +36,9 @@ def main():
     for start, end in arrows:
         ax.annotate('', xy=end, xytext=start,
                     arrowprops=dict(arrowstyle='->', color=NAVY, lw=1.5))
-    fig.savefig(FIG / 'architecture.png', dpi=200, bbox_inches='tight')
+    fig.savefig(FIG / 'architecture.pdf', dpi=200, bbox_inches='tight')
     plt.close(fig)
-    print(f'wrote {FIG / "architecture.png"}')
+    print(f'wrote {FIG / "architecture.pdf"}')
 
 
 if __name__ == '__main__':

@@ -66,7 +66,7 @@ def main():
         ax.set_title(title);ax.legend(fontsize=8)
     axes[0,0].set(xlabel='time',ylabel='P');axes[0,1].set(xlabel='standardized log return',ylabel='density')
     for ax in axes[1]: ax.set(xlabel='lag (time)',ylabel='ACF')
-    savefig(fig,'extension_stylized_facts.png')
+    savefig(fig,'extension_stylized_facts.pdf')
 
     # An independent-path Gamma benchmark avoids mistaking serial samples for IID.
     gp=LiquidityParams(a=1,b=1,sigma=.7,lam=0)
@@ -80,7 +80,7 @@ def main():
     np.savez_compressed(ROOT/'results/data/extension_gamma.npz',price=samples,shape=shape,rate=rate)
     fig,ax=plt.subplots(figsize=(6.5,3.3));ax.hist(samples,bins=60,density=True,alpha=.6,color='#456e9b',label=f'{len(samples)} independent terminal paths')
     xx=np.linspace(.001,np.quantile(samples,.999),400);ax.plot(xx,gamma.pdf(xx,shape,scale=1/rate),'#d46138',lw=2,label='Exact Gamma stationary density')
-    ax.set(xlabel='P',ylabel='density',title='Numerical benchmark at lambda = 0');ax.legend(fontsize=8);savefig(fig,'extension_gamma.png')
+    ax.set(xlabel='P',ylabel='density',title='Numerical benchmark at lambda = 0');ax.legend(fontsize=8);savefig(fig,'extension_gamma.pdf')
 
     # The b=0 tangent process measures the low-price Lyapunov exponent.
     # The full b>0 stationary process has zero mean long-run log return instead.
@@ -103,7 +103,7 @@ def main():
     ax.contour(aa,lambdas,growth,levels=[0],colors='white',linewidths=1.6)
     ax.plot([],[],'w-',label='Finite-T Monte Carlo g=0')
     ax.set(xlabel='funding a',ylabel='liquidity heterogeneity lambda',title='Low-price tangent exponent (b=0), m=2')
-    ax.legend(facecolor='#eeeeee',fontsize=8);fig.colorbar(image,ax=ax,label='mean log growth / time');savefig(fig,'extension_growth_phase.png')
+    ax.legend(facecolor='#eeeeee',fontsize=8);fig.colorbar(image,ax=ax,label='mean log growth / time');savefig(fig,'extension_growth_phase.pdf')
     summary['growth_phase']={'definition':'b=0 low-price tangent exponent, measured over second half of T',
        'n_paths':n_phase,'T':steps*.02,'dt':.02,'m':2,'sigma':.7,
        'max_absolute_MC_minus_theory':float(np.max(np.abs(growth-(aa[None,:]-critical_a(.7,lambdas[:,None]))))),
@@ -132,7 +132,7 @@ def main():
         ax.errorbar([r['lambda'] for r in rr],[r['inferred_boundary_a'] for r in rr],
             yerr=[1.96*r['growth_se'] for r in rr],fmt='o',color=color,capsize=3,label=f'MC, normalized={normalized}')
     ax.set(xlabel='heterogeneity lambda',ylabel='critical funding a',title='Removing mean-variance amplification removes boundary shift')
-    ax.legend(fontsize=8);savefig(fig,'extension_normalization_control.png')
+    ax.legend(fontsize=8);savefig(fig,'extension_normalization_control.pdf')
 
     # A phase map of a finite-horizon event is NOT a thermodynamic phase diagram.
     ms=np.array([.1,.3,1,3,10,30]); lams=np.array([0,.3,.6,.9,1.2,1.5,1.8]); risk=np.zeros((len(lams),len(ms)))
@@ -152,7 +152,7 @@ def main():
         for i in range(len(ms)): ax.text(i,j,f'{risk[j,i]:.2f}',ha='center',va='center',color='white' if risk[j,i]<.6 else 'black',fontsize=8)
     ax.set_xticks(range(len(ms)),[str(m) for m in ms]);ax.set_yticks(range(len(lams)),[str(l) for l in lams])
     ax.set(xlabel='liquidity memory m (discrete grid)',ylabel='heterogeneity lambda',title=f'Finite-T first passage: P <= 0.1 P0, T={risk_steps*.02:g}')
-    fig.colorbar(im,ax=ax,label='path fraction');savefig(fig,'extension_risk_phase.png')
+    fig.colorbar(im,ax=ax,label='path fraction');savefig(fig,'extension_risk_phase.pdf')
     summary['first_passage']={'definition':'first grid-point crossing P<=0.1P0; no interpolation',
        'n_paths_per_cell':n_risk,'T':risk_steps*.02,'dt':.02,'a':.8,'b':1,'sigma':.7,'m_values':ms.tolist(),
        'lambda_values':lams.tolist(),'max_failed_paths':max(x['failed_paths'] for x in risk_rows),
@@ -168,14 +168,14 @@ def main():
         ax.plot(lags,theory,color=color,lw=1.8,ls='--',label=f'm={m:g} exact')
         correlation_rows.append({'m':m,'lambda':.8,'acf_lag_1time_measured':float(acf[50]),'acf_lag_1time_theory':float(theory[50])})
     ax.set(xlabel='lag (time)',ylabel='ACF of exp(h)',title='Liquidity memory controls correlation time');ax.legend(ncol=2,fontsize=8)
-    savefig(fig,'extension_memory.png');summary['memory_correlation']=correlation_rows
+    savefig(fig,'extension_memory.pdf');summary['memory_correlation']=correlation_rows
 
     convergence=coupled_convergence(LiquidityParams(a=1,b=1,sigma=.7,m=.5,lam=.8),
        fine_dt=.0025,total_time=20,n_paths=512,factors=(1,2,4,8,16),seed=17111)
     write_csv(ROOT/'results/data/extension_convergence.csv',convergence);summary['convergence']=convergence
     fig,ax=plt.subplots(figsize=(5.8,3.4));ax.loglog([r['dt'] for r in convergence[1:]],[r['rms_log_error_vs_finest'] for r in convergence[1:]],'o-',color='#456e9b')
     ax.set(xlabel='dt',ylabel='RMS log-price difference to dt=0.0025',title='Shared-noise refinement; exact OU coupling')
-    savefig(fig,'extension_convergence.png')
+    savefig(fig,'extension_convergence.pdf')
 
     # Grid-crossing bias and frozen-h time-step sensitivity at selected risk cells.
     risk_refinement=[]

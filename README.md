@@ -64,7 +64,7 @@ h = -log(effective order-book depth)
 **多尺度记忆扩展（原创探索）。** 单一 OU 只有一个松弛时间，波动率自相关是指数衰减；把 $h$ 替换为多个独立 OU 分量的叠加
 $h=\sum_k h_k$（`src/frontier_econophysics/multiscale.py`），
 使平稳方差仍为 $\lambda^2$、长期入侵指数 $g=a-\sigma^2/2\,e^{\lambda^2/2}$ 对记忆谱 $\{m_k\}$ **不变**（退火不变定理），
-但有限时间自平均性、首达风险与 $|r|$ 自相关强烈依赖记忆谱——谱越宽，$|r|$ 自相关越接近幂律。实验结果见 `results/multiscale_summary.json` 与 `results/figures/multiscale_*.png`。
+但有限时间自平均性、首达风险与 $|r|$ 自相关强烈依赖记忆谱——谱越宽，$|r|$ 自相关越接近幂律。实验结果见 `results/multiscale_summary.json` 与 `results/figures/multiscale_*.pdf`。
 
 ## 已实际获得的结果
 

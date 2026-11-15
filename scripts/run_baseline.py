@@ -66,7 +66,7 @@ def run(trials=100, steps=1000, seed=20261114):
         ax.set_xlabel(names[j]); ax.set_ylabel('Trials')
     axes[0,0].legend(fontsize=7)
     fig.suptitle('Paper Fig.2 protocol: parameter recovery (explicit irregular-dt completion)')
-    fig.savefig(figs/'baseline_parameter_recovery.png'); plt.close(fig)
+    fig.savefig(figs/'baseline_parameter_recovery.pdf'); plt.close(fig)
 
     # Explicit representative coefficient ensembles, NOT the paper's unspecified
     # random-parameter distribution. Identifiability is assessed rather than forced.
@@ -100,7 +100,7 @@ def run(trials=100, steps=1000, seed=20261114):
     ax.set(xticks=range(4),xticklabels=range(1,5),yticks=range(4),yticklabels=range(1,5),
            xlabel='AIC selected polynomial order',ylabel='Generating order',
            title='Order recovery: representative coefficients\n(not original random-parameter ensemble)')
-    fig.savefig(figs/'baseline_order_selection.png'); plt.close(fig)
+    fig.savefig(figs/'baseline_order_selection.pdf'); plt.close(fig)
 
     # A reproducible q=2 trajectory and four-chain posterior potential ensemble.
     sim = simulate_em([2.,-1.],.3,np.full(10000,.03),p0=2.,seed=seed+90000)
@@ -122,7 +122,7 @@ def run(trials=100, steps=1000, seed=20261114):
     ax.axhline(0,color='gray',lw=.7)
     ax.set(xlabel='Dimensionless price P',ylabel='Deterministic potential V(P)',title='Potential reconstruction: q=2 synthetic trajectory')
     ax.legend(fontsize=7,loc='upper right')
-    fig.savefig(figs/'baseline_posterior_potential.png');plt.close(fig)
+    fig.savefig(figs/'baseline_posterior_potential.pdf');plt.close(fig)
     summary = {
         'paper':{'doi':'10.1103/PhysRevE.109.024226','published':'2024-02-28',
                  'scope':'Synthetic core-algorithm replication, not TAQ/CRSP empirical replication',
